@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>肿瘤患者全程管理平台</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+            min-height: 100vh;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            text-align: center;
+            padding: 30px 0;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+        }
+        
+        h1 {
+            font-size: 2.2em;
+            color: #1e40af;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            color: #64748b;
+            font-size: 1.1em;
+        }
+        
+        .tabs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 25px;
+            justify-content: center;
+        }
+        
+        .tab {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-width: 100px;
+            text-align: center;
+        }
+        
+        .tab.active {
+            background: #2563eb;
+            color: white;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+        }
+        
+        .tab {
+            background: white;
+            color: #64748b;
+            border: 1px solid #e2e8f0;
+        }
+        
+        .tab:hover {
+            background: #f1f5f9;
+            color: #1e40af;
+        }
+        
+        .content {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .cancer-selector {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 25px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .selector-title {
+            font-size: 1.1em;
+            font-weight: 600;
+            color: #334155;
+            margin-bottom: 15px;
+        }
+        
+        .cancer-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+        
+        .cancer-btn {
+            padding: 12px 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            background: white;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-width: 80px;
+            text-align: center;
+        }
+        
+        .cancer-btn.active {
+            border-color: #2563eb;
+            background: #eff6ff;
+            color: #2563eb;
+            font-weight: 600;
+        }
+        
+        .cancer-btn:hover {
+            border-color: #94a3b8;
+        }
+        
+        .section {
+            margin-bottom: 25px;
+            padding-bottom: 25px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        .section:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+        
+        .section-title {
+            font-size: 1.3em;
+            font-weight: 600;
+            color: #1e40af;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .section-title::before {
+            content: "•";
+            color: #2563eb;
+            margin-right: 10px;
+            font-size: 1.5em;
+        }
+        
+        .section-content {
+            color: #475569;
+            font-size: 15px;
+            line-height: 1.8;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        
+        th {
+            text-align: left;
+            padding: 12px 15px;
+            background: #f8fafc;
+            font-weight: 600;
+            color: #334155;
+            border-bottom: 2px solid #e2e8f0;
+        }
+        
+        td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #e2e8f0;
+            color: #475569;
+        }
+        
+        tr:hover {
+            background: #f8fafc;
+        }
+        
+        .badge {
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 500;
+            display: inline-block;
+        }
+        
+        .badge-primary {
+            background: #dbeafe;
+            color: #2563eb;
+        }
+        
+        .badge-success {
+            background: #dcfce7;
+            color: #16a34a;
+        }
+        
+        .badge-warning {
+            background: #fef3c7;
+            color: #d97706;
+        }
+        
+        .drug-tag {
+            background: #eff6ff;
+            color: #2563eb;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            margin: 2px;
+            display: inline-block;
+        }
+        
+        .search-box {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+        }
+        
+        .search-input {
+            flex: 1;
+            min-width: 200px;
+            padding: 12px 15px;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 15px;
+        }
+        
+        .search-input:focus {
+            outline: none;
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+        
+        .trial-card {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-left: 4px solid #2563eb;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+        
+        .trial-id {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+        
+        .trial-id span {
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        
+        .trial-title {
+            font-size: 1.2em;
+            font-weight: 600;
+            color: #1e40af;
+            margin-bottom: 12px;
+        }
+        
+        .trial-info {
+            color: #64748b;
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+        
+        .trial-info strong {
+            color: #334155;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 100px;
+            font-size: 24px;
+            color: #2563eb;
+            font-weight: 600;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+            
+            h1 {
+                font-size: 1.8em;
+            }
+            
+            .content {
+                padding: 20px;
+            }
+            
+            .cancer-buttons {
+                justify-content: center;
+            }
+            
+            .search-box {
+                flex-direction: column;
+            }
+            
+            .search-input {
+                min-width: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container" id="app">
+        <div class="loading">肿瘤患者全程管理平台 - 加载中...</div>
+    </div>
+
+    <script>
+        // 模拟数据（完全本地，不依赖网络）
+        const appData = {
+            cancerTypes: [
+                { id: "lung", name: "肺癌" },
+                { id: "breast", name: "乳腺癌" },
+                { id: "colorectal", name: "结直肠癌" },
+                { id: "liver", name: "肝癌" },
+                { id: "gastric", name: "胃癌" },
+                { id: "pancreatic", name: "胰腺癌" },
+            ],
+            
+            guidelinesData: {
+                lung: {
+                    title: "肺癌诊疗指南",
+                    version: "2024版",
+                    sections: [
+                        { title: "筛查与诊断", content: "低剂量CT筛查适用于50-75岁、吸烟史≥20包年的人群..." },
+                        { title: "分期标准", content: "采用TNM分期系统，I期：肿瘤≤3cm，无淋巴结转移..." },
+                        { title: "治疗原则", content: "早期：手术为主；局部晚期：同步放化疗；晚期：系统治疗..." },
+                        { title: "随访建议", content: "术后2年内每3-6个月随访，包括影像学检查和肿瘤标志物检测..." }
+                    ]
+                },
+                breast: {
+                    title: "乳腺癌诊疗指南",
+                    version: "2024版",
+                    sections: [
+                        { title: "筛查与诊断", content: "40岁以上女性每年乳腺X线摄影筛查，高危人群加做MRI..." },
+                        { title: "分子分型", content: "分为Luminal A、Luminal B、HER2过表达型、三阴性乳腺癌..." },
+                        { title: "治疗原则", content: "早期：保乳手术+放疗或乳房切除术；晚期：系统治疗为主..." },
+                        { title: "随访建议", content: "术后5年内每3-6个月随访，监测复发和第二原发癌..." }
+                    ]
+                },
+                colorectal: {
+                    title: "结直肠癌诊疗指南",
+                    version: "2024版",
+                    sections: [
+                        { title: "筛查与诊断", content: "50岁以上人群建议结肠镜筛查，每10年一次..." },
+                        { title: "分期标准", content: "I期：肿瘤局限于肠壁；II期：穿透肠壁；III期：淋巴结转移..." },
+                        { title: "治疗原则", content: "早期：内镜下切除；进展期：手术+化疗；晚期：系统治疗..." },
+                        { title: "随访建议", content: "术后2年内每3-6个月随访，监测CEA和影像学变化..." }
+                    ]
+                },
+                liver: {
+                    title: "肝癌诊疗指南",
+                    version: "2024版",
+                    sections: [
+                        { title: "筛查与诊断", content: "乙肝/丙肝携带者每6个月进行AFP和超声检查..." },
+                        { title: "分期标准", content: "采用BCLC分期：0期（极早期）；A期（早期）；B期（中期）..." },
+                        { title: "治疗原则", content: "早期：手术或消融；中期：TACE；晚期：靶向和免疫治疗..." },
+                        { title: "随访建议", content: "每3个月随访，监测AFP、肝功能和影像学变化..." }
+                    ]
+                },
+                gastric: {
+                    title: "胃癌诊疗指南",
+                    version: "2024版",
+                    sections: [
+                        { title: "筛查与诊断", content: "胃癌高发区40岁以上人群建议胃镜筛查..." },
+                        { title: "分期标准", content: "I期：肿瘤局限于黏膜；II期：侵犯肌层；III期：穿透浆膜..." },
+                        { title: "治疗原则", content: "早期：内镜下切除；进展期：手术+围手术期化疗..." },
+                        { title: "随访建议", content: "术后2年内每3-6个月随访，监测复发和营养状况..." }
+                    ]
+                },
+                pancreatic: {
+                    title: "胰腺癌诊疗指南",
+                    version: "2024版",
+                    sections: [
+                        { title: "筛查与诊断", content: "目前不推荐普通人群筛查，高危人群可考虑MRI/MRCP..." },
+                        { title: "分期标准", content: "可切除：未侵犯血管；交界可切除：轻度接触血管..." },
+                        { title: "治疗原则", content: "可切除：手术+辅助化疗；晚期：FOLFIRINOX或吉西他滨方案..." },
+                        { title: "随访建议", content: "每3-6个月随访，监测CA19-9、CT和营养状况..." }
+                    ]
+                }
+            },
+            
+            targetedTherapyData: {
+                lung: [
+                    { gene: "EGFR", drugs: ["吉非替尼", "厄洛替尼", "奥希替尼"], status: "一线推荐" },
+                    { gene: "ALK", drugs: ["克唑替尼", "阿来替尼"], status: "一线推荐" },
+                ],
+                breast: [
+                    { gene: "HER2", drugs: ["曲妥珠单抗", "帕妥珠单抗"], status: "一线推荐" },
+                    { gene: "BRCA1/2", drugs: ["奥拉帕利"], status: "特定人群" },
+                ],
+                colorectal: [
+                    { gene: "KRAS野生型", drugs: ["西妥昔单抗"], status: "一线推荐" },
+                    { gene: "BRAF V600E", drugs: ["康奈非尼+西妥昔单抗"], status: "二线推荐" },
+                ],
+                liver: [
+                    { gene: "无特定基因", drugs: ["索拉非尼", "仑伐替尼"], status: "一线推荐" },
+                ],
+                gastric: [
+                    { gene: "HER2扩增", drugs: ["曲妥珠单抗"], status: "一线推荐" },
+                ],
+                pancreatic: [
+                    { gene: "BRCA1/2", drugs: ["奥拉帕利"], status: "维持治疗" },
+                ]
+            },
+            
+            immunotherapyData: {
+                lung: [
+                    { biomarker: "PD-L1≥50%", drugs: ["帕博利珠单抗"], indication: "一线单药" },
+                    { biomarker: "MSI-H/dMMR", drugs: ["帕博利珠单抗"], indication: "不限线" },
+                ],
+                breast: [
+                    { biomarker: "PD-L1阳性", drugs: ["帕博利珠单抗+化疗"], indication: "三阴性一线" },
+                ],
+                colorectal: [
+                    { biomarker: "MSI-H/dMMR", drugs: ["帕博利珠单抗"], indication: "不限线" },
+                ],
+                liver: [
+                    { biomarker: "PD-L1阳性", drugs: ["阿替利珠单抗+贝伐珠单抗"], indication: "一线" },
+                ],
+                gastric: [
+                    { biomarker: "PD-L1 CPS≥5", drugs: ["帕博利珠单抗+化疗"], indication: "一线" },
+                ],
+                pancreatic: [
+                    { biomarker: "MSI-H/dMMR", drugs: ["帕博利珠单抗"], indication: "不限线" },
+                ]
+            },
+            
+            insuranceDrugsData: [
+                { name: "奥希替尼", cancer: "肺癌", category: "靶向药", insurance: "甲类", price: "¥15,800/月" },
+                { name: "吉非替尼", cancer: "肺癌", category: "靶向药", insurance: "乙类", price: "¥4,500/月" },
+                { name: "帕博利珠单抗", cancer: "肺癌", category: "免疫药", insurance: "甲类", price: "¥10,688/次" },
+                { name: "曲妥珠单抗", cancer: "乳腺癌", category: "靶向药", insurance: "甲类", price: "¥7,600/支" },
+            ],
+            
+            clinicalTrialsData: [
+                {
+                    id: "CT2024-LUNG-001",
+                    title: "新型EGFR抑制剂治疗晚期非小细胞肺癌II期临床研究",
+                    cancer: "肺癌",
+                    phase: "II",
+                    location: "北京协和医院、上海胸科医院",
+                    eligibility: "EGFR突变阳性，既往接受过一代TKI治疗失败",
+                    status: "招募中"
+                },
+            ]
+        };
+
+        // 应用状态
+        let activeTab = 'guidelines';
+        let selectedCancer = 'lung';
+        let searchPath = '';
+
+        // DOM操作函数
+        function $(selector) {
+            return document.querySelector(selector);
+        }
+
+        function $$(selector) {
+            return document.querySelectorAll(selector);
+        }
+
+        function createElement(tag, className = '', text = '', attributes = {}) {
+            const element = document.createElement(tag);
+            if (className) element.className = className;
+            if (text) element.textContent = text;
+            Object.keys(attributes).forEach(key => {
+                element.setAttribute(key, attributes[key]);
+            });
+            return element;
+        }
+
+        // 渲染函数
+        function renderApp() {
+            const app = $('#app');
+            app.innerHTML = `
+                <header>
+                    <h1>肿瘤患者全程管理平台</h1>
+                    <p class="subtitle">专业、全面、个性化的肿瘤诊疗支持系统</p>
+                </header>
+
+                <div class="tabs">
+                    <button class="tab ${activeTab === 'guidelines' ? 'active' : ''}" onclick="changeTab('guidelines')">诊疗指南</button>
+                    <button class="tab ${activeTab === 'targeted' ? 'active' : ''}" onclick="changeTab('targeted')">靶向治疗</button>
+                    <button class="tab ${activeTab === 'immunotherapy' ? 'active' : ''}" onclick="changeTab('immunotherapy')">免疫治疗</button>
+                    <button class="tab ${activeTab === 'insurance' ? 'active' : ''}" onclick="changeTab('insurance')">医保药物</button>
+                    <button class="tab ${activeTab === 'trials' ? 'active' : ''}" onclick="changeTab('trials')">临床试验</button>
+                </div>
+
+                <div class="content">
+                    ${renderContent()}
+                </div>
+            `;
+        }
+
+        function renderContent() {
+            switch(activeTab) {
+                case 'guidelines':
+                    return renderGuidelines();
+                case 'targeted':
+                    return renderTargeted();
+                case 'immunotherapy':
+                    return renderImmunotherapy();
+                case 'insurance':
+                    return renderInsurance();
+                case 'trials':
+                    return renderTrials();
+                default:
+                    return '';
+            }
+        }
+
+        function renderGuidelines() {
+            const data = appData.guidelinesData[selectedCancer];
+            return `
+                <div class="cancer-selector">
+                    <h3 class="selector-title">选择癌种</h3>
+                    <div class="cancer-buttons">
+                        ${appData.cancerTypes.map(cancer => 
+                            `<button class="cancer-btn ${cancer.id === selectedCancer ? 'active' : ''}" 
+                                    onclick="selectCancer('${cancer.id}')">${cancer.name}</button>`
+                        ).join('')}
+                    </div>
+                </div>
+
+                <h2 class="section-title">${data.title}</h2>
+                <p style="color: #64748b; margin-bottom: 25px;">${data.version}</p>
+
+                ${data.sections.map(section => `
+                    <div class="section">
+                        <h3 class="section-title">${section.title}</h3>
+                        <p class="section-content">${section.content}</p>
+                    </div>
+                `).join('')}
+            `;
+        }
+
+        function renderTargeted() {
+            const data = appData.targetedTherapyData[selectedCancer];
+            return `
+                <div class="cancer-selector">
+                    <h3 class="selector-title">选择癌种</h3>
+                    <div class="cancer-buttons">
+                        ${appData.cancerTypes.map(cancer => 
+                            `<button class="cancer-btn ${cancer.id === selectedCancer ? 'active' : ''}" 
+                                    onclick="selectCancer('${cancer.id}')">${cancer.name}</button>`
+                        ).join('')}
+                    </div>
+                </div>
+
+                <h2 class="section-title">靶向必检基因及对应靶向药物</h2>
+                <p style="color: #64748b; margin-bottom: 25px;">按${appData.cancerTypes.find(c => c.id === selectedCancer)?.name}分类</p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>基因检测</th>
+                            <th>推荐靶向药物</th>
+                            <th>推荐级别</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${data.map(item => `
+                            <tr>
+                                <td><strong>${item.gene}</strong></td>
+                                <td>
+                                    ${item.drugs.map(drug => `<span class="drug-tag">${drug}</span>`).join('')}
+                                </td>
+                                <td>
+                                    <span class="badge ${item.status === '一线推荐' ? 'badge-success' : 'badge-warning'}">
+                                        ${item.status}
+                                    </span>
+                                </td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            `;
+        }
+
+        function renderImmunotherapy() {
+            const data = appData.immunotherapyData[selectedCancer];
+            return `
+                <div class="cancer-selector">
+                    <h3 class="selector-title">选择癌种</h3>
+                    <div class="cancer-buttons">
+                        ${appData.cancerTypes.map(cancer => 
+                            `<button class="cancer-btn ${cancer.id === selectedCancer ? 'active' : ''}" 
+                                    onclick="selectCancer('${cancer.id}')">${cancer.name}</button>`
+                        ).join('')}
+                    </div>
+                </div>
+
+                <h2 class="section-title">免疫指标检测及对应免疫药物</h2>
+                <p style="color: #64748b; margin-bottom: 25px;">按${appData.cancerTypes.find(c => c.id === selectedCancer)?.name}分类</p>
+
+                ${data.map(item => `
+                    <div class="section">
+                        <h3 class="section-title">生物标志物: ${item.biomarker}</h3>
+                        <p class="section-content"><strong>适应症:</strong> ${item.indication}</p>
+                        <p class="section-content"><strong>推荐药物:</strong> 
+                            ${item.drugs.map(drug => `<span class="drug-tag">${drug}</span>`).join('')}
+                        </p>
+                    </div>
+                `).join('')}
+            `;
+        }
+
+        function renderInsurance() {
+            const filtered = appData.insuranceDrugsData.filter(drug => 
+                drug.name.includes(searchPath) || 
+                drug.cancer.includes(searchPath) || 
+                drug.category.includes(searchPath)
+            );
+
+            return `
+                <div class="search-box">
+                    <input type="text" class="search-input" placeholder="搜索药物名称、癌种或类别..." 
+                           value="${searchPath}" oninput="searchDrugs(this.value)">
+                </div>
+
+                <h2 class="section-title">医保药物目录</h2>
+                <p style="color: #64748b; margin-bottom: 25px;">共${filtered.length}种药物</p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>药物名称</th>
+                            <th>适用癌种</th>
+                            <th>药物类别</th>
+                            <th>医保状态</th>
+                            <th>参考价格</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${filtered.map(drug => `
+                            <tr>
+                                <td><strong>${drug.name}</strong></td>
+                                <td>${drug.cancer}</td>
+                                <td>
+                                    <span class="badge ${drug.category === '靶向药' ? 'badge-primary' : 'badge-warning'}">
+                                        ${drug.category}
+                                    </span>
+                                </td>
+                                <td>
+                                    <span class="badge ${drug.insurance === '甲类' ? 'badge-success' : 'badge-warning'}">
+                                        ${drug.insurance}
+                                    </span>
+                                </td>
+                                <td>${drug.price}</td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            `;
+        }
+
+        function renderTrials() {
+            const filtered = appData.clinicalTrialsData.filter(trial => 
+                trial.title.includes(searchPath) || 
+                trial.cancer.includes(searchPath) || 
+                trial.id.includes(searchPath)
+            );
+
+            return `
+                <div class="search-box">
+                    <input type="text" class="search-input" placeholder="搜索试验编号、标题或癌种..." 
+                           value="${searchPath}" oninput="searchTrials(this.value)">
+                </div>
+
+                <h2 class="section-title">临床试验查询</h2>
+                <p style="color: #64748b; margin-bottom: 25px;">共${filtered.length}个试验</p>
+
+                ${filtered.map(trial => `
+                    <div class="trial-card">
+                        <div class="trial-id">
+                            <span class="badge badge-primary">${trial.id}</span>
+                            <span class="badge badge-success">${trial.phase}期</span>
+                            <span class="badge badge-success">${trial.status}</span>
+                        </div>
+                        <h3 class="trial-title">${trial.title}</h3>
+                        <p class="trial-info"><strong>入组条件:</strong> ${trial.eligibility}</p>
+                        <p class="trial-info"><strong>研究中心:</strong> ${trial.location}</p>
+                    </div>
+                `).join('')}
+            `;
+        }
+
+        // 交互函数
+        function changeTab(tab) {
+            activeTab = tab;
+            searchPath = '';
+            renderApp();
+        }
+
+        function selectCancer(cancerId) {
+            selectedCancer = cancerId;
+            renderApp();
+        }
+
+        function searchDrugs(value) {
+            searchPath = value;
+            activeTab = 'insurance';
+            renderApp();
+        }
+
+        function searchTrials(value) {
+            searchPath = value;
+            activeTab = 'trials';
+            renderApp();
+        }
+
+        // 初始化应用
+        document.addEventListener('DOMContentLoaded', function() {
+            try {
+                renderApp();
+            } catch (error) {
+                $('#app').innerHTML = `
+                    <div style="text-align:center;padding:100px;color:red;">
+                        <h2>加载失败</h2>
+                        <p>请重试或联系技术支持</p>
+                    </div>
+                `;
+            }
+        });
+    </script>
+</body>
+</html>
